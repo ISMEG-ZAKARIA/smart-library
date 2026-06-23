@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+{% block title %}Alertes{% endblock %}
+{% block client_topbar_icon %}notifications{% endblock %}
+{% block client_topbar_title %}Alertes{% endblock %}
+{% block content %}
+{% if request.user.est_client %}
+<header class="client-page-head"><h1>Centre des alertes</h1><p>Suivi des alertes liées à vos réservations, emprunts et pénalités.</p></header>
+<section class="client-kpi-grid four">
+  <article><span>Niveau d'alerte actuel</span><strong>{{ request.user.niveau_alerte }} / 3</strong></article>
+  <article><span>Alertes actives</span><strong>{{ alertes_actives }}</strong></article>
+  <article><span>Réservations expirées</span><strong>{{ reservations_expirees }}</strong></article>
+  <article><span>Statut du compte</span><strong class="gold">{% if request.user.est_bloque %}Bloqué{% else %}Actif{% endif %}</strong></article>
+</section>
+<section class="client-risk-progress client-surface">
+  <h2>Progression du risque</h2>
+  <div class="client-risk-track"><span class="{% if request.user.niveau_alerte >= 1 %}active{% endif %}"><b>1</b>Niveau 1</span><span class="{% if request.user.niveau_alerte >= 2 %}active{% endif %}"><b>2</b>Niveau 2</span><span class="{% if request.user.niveau_alerte >= 3 %}active{% endif %}"><b>3</b>Niveau 3</span><span class="{% if request.user.est_bloque %}blocked{% endif %}"><b>⊘</b>Bloqué</span></div>
+  <p>Chaque événement important est enregistré et vous est signalé ici afin de vous aider à régulariser rapidement votre situation.</p>
+</section>
+<div class="client-alert-layout">
+  <section class="client-alert-list client-surface">
+    <h2>Alertes et notifications</h2>
+    {% for item in notifications %}<article class="{% if not item.est_lue %}unread{% endif %}"><span class="material-symbols-outlined">{% if item.type == 'PENALTY' %}error{% elif item.type == 'RESERVATION' %}bookmark{% else %}notifications{% endif %}</span><div><small>{{ item.get_type_display }} · {{ item.creee_le|date:'d/m/Y H:i' }}</small><h3>{{ item.titre }}</h3><p>{{ item.message }}</p></div>{% if not item.est_lue %}<form method="post" action="{% url 'alerts:lire' item.pk %}">{% csrf_token %}<button class="client-text-button" type="submit">Marquer comme lue</button></form>{% endif %}</article>{% empty %}<p class="client-empty">Aucune alerte enregistrée.</p>{% endfor %}
+  </section>
+  <aside class="client-dark-rules"><h2><span class="material-symbols-outlined">gavel</span>Rappel des règles</h2><ul><li>Retirez vos réservations avant leur expiration.</li><li>Respectez les dates prévues de retour.</li><li>Consultez rapidement toute pénalité reçue.</li></ul></aside>
+</div>
+{% else %}
+<header class="page-head"><div><h1>Notifications</h1><p>Alertes et confirmations liées à votre activité.</p></div></header><section class="notification-list">{% for item in notifications %}<article class="notification-card panel {% if not item.est_lue %}unread{% endif %}"><div><span class="pill">{{ item.get_type_display }}</span><h2>{{ item.titre }}</h2><p>{{ item.message }}</p><time>{{ item.creee_le|date:'d/m/Y H:i' }}</time></div>{% if not item.est_lue %}<form method="post" action="{% url 'alerts:lire' item.pk %}">{% csrf_token %}<button class="btn btn-secondary btn-small">Marquer comme lue</button></form>{% endif %}</article>{% empty %}<div class="empty-state">Aucune notification.</div>{% endfor %}</section>
+{% endif %}
+{% endblock %}

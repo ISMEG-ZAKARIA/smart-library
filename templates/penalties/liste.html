@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% block title %}Pénalités{% endblock %}
+{% block client_topbar_icon %}error{% endblock %}
+{% block client_topbar_title %}Mes pénalités{% endblock %}
+{% block content %}
+{% if request.user.est_client %}
+<header class="client-page-head"><h1>Mes pénalités</h1><p>Consultez les pénalités associées à votre compte et leur état de traitement.</p></header>
+<section class="client-kpi-grid four">
+  <article><span>Total pénalités</span><strong>{{ penalites_total }}</strong></article>
+  <article><span>En attente</span><strong>{{ penalites_ouvertes }}</strong></article>
+  <article><span>Réglées</span><strong>{{ penalites_reglees }}</strong></article>
+  <article class="highlight"><span>Montant total</span><strong>{{ montant_total }} DH</strong></article>
+</section>
+<div class="client-penalty-layout">
+  <section class="client-penalty-history client-surface" id="historique-penalites">
+    <h2>Historique des pénalités</h2>
+    <div class="client-table-wrap">
+      <table><thead><tr><th>Date</th><th>Motif</th><th>Type</th><th>Montant</th><th>Statut</th></tr></thead><tbody>{% for item in penalites %}<tr><td>{{ item.creee_le|date:'d/m/Y' }}</td><td>{{ item.motif|linebreaksbr }}</td><td>{{ item.get_type_display }}</td><td><strong>{{ item.montant }} DH</strong></td><td><span class="client-loan-state {% if item.statut == 'OPEN' %}warning{% elif item.statut == 'CANCELLED' %}danger{% endif %}">{{ item.get_statut_display }}</span></td></tr>{% empty %}<tr><td colspan="5" class="client-empty">Aucune pénalité enregistrée.</td></tr>{% endfor %}</tbody></table>
+    </div>
+  </section>
+  <aside class="client-penalty-rules client-surface"><h2>Règles des pénalités</h2><h3>Retard de retour</h3><p>Une pénalité peut être appliquée après dépassement du délai autorisé.</p><h3>Livre endommagé</h3><p>Le montant dépend du niveau de gravité constaté.</p><h3>Livre perdu</h3><p>Le remplacement ou le remboursement de l'ouvrage peut être demandé.</p></aside>
+</div>
+{% else %}
+<header class="page-head"><div><h1>Pénalités & Anomalies</h1><p>Motifs, montants, statuts et actions de régularisation.</p></div><a class="btn btn-primary" href="{% url 'penalties:creer' %}">Appliquer une pénalité</a></header>
+<section class="panel table-wrap" id="historique-penalites"><div class="panel-head"><h2>Historique des pénalités</h2></div><table><thead><tr><th>Client</th><th>Motif</th><th>Type</th><th>Montant</th><th>Date</th><th>Statut</th><th>Action</th></tr></thead><tbody>{% for item in penalites %}<tr><td>{{ item.client }}</td><td>{{ item.motif|linebreaksbr }}</td><td>{{ item.get_type_display }}</td><td class="gold-text"><strong>{{ item.montant }} DH</strong></td><td>{{ item.creee_le|date:'d/m/Y H:i' }}</td><td><span class="pill {% if item.statut == 'OPEN' %}pill-warning{% elif item.statut == 'CANCELLED' %}pill-danger{% else %}pill-success{% endif %}">{{ item.get_statut_display }}</span></td><td>{% if item.statut == 'OPEN' %}<div class="page-actions"><form method="post" action="{% url 'penalties:regler' item.pk %}">{% csrf_token %}<button class="btn btn-secondary btn-small">Marquer réglée</button></form><form method="post" action="{% url 'penalties:annuler' item.pk %}">{% csrf_token %}<input type="hidden" name="motif" value="Annulation depuis la liste des pénalités"><button class="btn btn-danger btn-small">Annuler</button></form></div>{% else %}—{% endif %}</td></tr>{% empty %}<tr><td class="empty" colspan="7">Aucune pénalité enregistrée.</td></tr>{% endfor %}</tbody></table></section>
+{% endif %}
+{% endblock %}

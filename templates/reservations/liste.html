@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block title %}Mes réservations{% endblock %}
+{% block client_topbar_icon %}folder_open{% endblock %}
+{% block client_topbar_title %}Mes réservations{% endblock %}
+{% block content %}
+<header class="client-page-head">
+  <h1>Mes réservations</h1>
+  <p>Consultez et suivez vos réservations actives.</p>
+</header>
+
+<section class="client-reservation-grid">
+  {% for item in reservations %}
+  <article class="client-reservation-card client-surface">
+    <div class="client-reservation-book">
+      {% if item.livre.couverture %}<img src="{{ item.livre.couverture.url }}" alt="Couverture de {{ item.livre.titre }}">{% else %}<span class="client-mini-cover">{{ item.livre.titre|first }}</span>{% endif %}
+      <div><small>{{ item.livre.categorie }}</small><h2>{{ item.livre.titre }}</h2><p>{% for auteur in item.livre.auteurs.all %}{{ auteur }}{% if not forloop.last %}, {% endif %}{% endfor %}</p></div>
+      <code>RES-{{ item.pk|stringformat:'04d' }}</code>
+    </div>
+    <div class="client-reservation-dates"><p><span>Réservation</span><strong>{{ item.reservee_le|date:'d/m/Y' }}</strong></p><p><span>Limite retrait</span><strong>{{ item.expire_le|date:'d/m/Y' }}</strong></p></div>
+    <div class="client-reservation-status"><span class="material-symbols-outlined">schedule</span><strong>{{ item.get_statut_display }}</strong><b class="{% if item.statut == 'EXPIRED' or item.statut == 'CANCELLED' %}danger{% endif %}">{{ item.get_statut_display }}</b></div>
+    {% if item.statut == 'ACTIVE' %}<form method="post" action="{% url 'reservations:annuler' item.pk %}">{% csrf_token %}<input type="hidden" name="motif" value="Annulation demandée par le client"><button class="client-text-button" type="submit">Annuler cette réservation</button></form>{% endif %}
+  </article>
+  {% empty %}<div class="client-empty client-surface">Vous n'avez encore aucune réservation. <a href="{% url 'catalog:catalogue' %}">Explorer le catalogue</a></div>{% endfor %}
+</section>
+
+<section class="client-rules-panel client-surface">
+  <div>
+    <h2><span class="material-symbols-outlined">gavel</span>Règles de réservation</h2>
+    <ul><li>Une réservation reste active jusqu'à sa date d'expiration.</li><li>Après expiration, le livre redevient disponible.</li><li>Une réservation expirée peut augmenter le niveau d'alerte.</li><li>Le blocage du compte empêche toute nouvelle réservation.</li></ul>
+  </div>
+  <div>
+    <h2><span class="material-symbols-outlined danger-icon">warning</span>État de l'alerte</h2>
+    <div class="client-alert-box"><strong>Niveau d'alerte actuel : <b>{{ request.user.niveau_alerte }} / 3</b></strong><div class="client-alert-steps"><span class="{% if request.user.niveau_alerte >= 1 %}active{% endif %}">Niveau 1</span><span class="{% if request.user.niveau_alerte >= 2 %}active{% endif %}">Niveau 2</span><span class="{% if request.user.niveau_alerte >= 3 %}active{% endif %}">Niveau 3</span><span class="{% if request.user.est_bloque %}blocked{% endif %}">Blocage</span></div></div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,4 @@
+{% extends 'base/base.html' %}
+{% block title %}Validation des retours{% endblock %}
+{% block content %}<header class="page-head"><div><h1>Validation des Retours</h1><p>Contrôlez le QR, le poids, l'état et le délai avant clôture.</p></div></header><section class="panel table-wrap"><table><thead><tr><th>Client</th><th>Livre</th><th>Retour prévu</th><th>Retard</th><th>Action</th></tr></thead><tbody>{% for item in emprunts %}<tr><td>{{ item.client }}</td><td>{{ item.livre }}</td><td>{{ item.retour_prevu_le|date:'d/m/Y' }}</td><td><span class="pill {% if item.jours_retard %}pill-danger{% else %}pill-success{% endif %}">{{ item.jours_retard }} jour(s)</span></td><td><a class="btn btn-primary btn-small" href="{% url 'loans:retour' item.pk %}">Contrôler le retour</a></td></tr>{% empty %}<tr><td colspan="5">Aucun retour à contrôler.</td></tr>{% endfor %}</tbody></table></section>{% endblock %}
+

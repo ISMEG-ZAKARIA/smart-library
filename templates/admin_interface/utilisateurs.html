@@ -1,0 +1,78 @@
+{% extends 'base/base.html' %}
+{% block title %}Gestion des utilisateurs{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Gestion des Utilisateurs</h1>
+    <p>Gérez les accès, surveillez les activités et appliquez les sanctions.</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'accounts:utilisateur_nouveau' %}">+ Nouvel utilisateur</a>
+</header>
+
+<form class="toolbar" method="get">
+  <input type="search" name="q" value="{{ recherche }}" placeholder="Nom, e-mail ou CIN">
+  <select name="role">
+    <option value="">Tous les rôles</option>
+    {% for value,label in roles %}<option value="{{ value }}" {% if role_actif == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <select name="statut">
+    <option value="">Tous les statuts</option>
+    <option value="actif" {% if statut_actif == 'actif' %}selected{% endif %}>Actif</option>
+    <option value="bloque" {% if statut_actif == 'bloque' %}selected{% endif %}>Bloqué</option>
+  </select>
+  <button class="btn btn-secondary" type="submit">Filtrer</button>
+</form>
+
+<section class="panel table-wrap users-table-panel">
+  <table class="users-table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Rôle</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Niveau d'alerte</th>
+        <th scope="col">Retards</th>
+        <th scope="col">Pénalités</th>
+        <th class="users-actions-heading" scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in page_obj %}
+      <tr>
+        <td class="users-id">#{{ user.pk }}</td>
+        <td><strong class="user-name">{{ user.get_full_name|default:user.username }}</strong></td>
+        <td class="user-email">{{ user.email }}</td>
+        <td>{{ user.get_role_display }}</td>
+        <td><span class="pill {% if user.est_bloque %}pill-danger{% else %}pill-success{% endif %}">{% if user.est_bloque %}Bloqué{% else %}Actif{% endif %}</span></td>
+        <td><span class="pill {% if user.score_risque >= 75 %}pill-danger{% elif user.score_risque >= 40 %}pill-warning{% else %}pill-success{% endif %}">{{ user.score_risque }}%</span></td>
+        <td class="users-number">{{ user.niveau_alerte }}</td>
+        <td class="users-number">{{ user.total_penalites }}</td>
+        <td class="users-actions-cell">
+          <div class="user-actions">
+            <a class="table-icon-button" href="{% url 'accounts:utilisateur_modifier' user.pk %}" aria-label="Modifier {{ user }}" title="Modifier">
+              <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            </a>
+            <form method="post" action="{% url 'accounts:utilisateur_blocage' user.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="motif" value="Décision depuis la gestion des utilisateurs">
+              <button class="table-icon-button {% if not user.est_bloque %}table-icon-danger{% endif %}" type="submit" aria-label="{% if user.est_bloque %}Débloquer{% else %}Bloquer{% endif %} {{ user }}" title="{% if user.est_bloque %}Débloquer{% else %}Bloquer{% endif %}">
+                <span class="material-symbols-outlined" aria-hidden="true">{% if user.est_bloque %}lock_open{% else %}block{% endif %}</span>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td class="empty" colspan="9">Aucun utilisateur ne correspond aux filtres.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ recherche }}">‹</a>{% endif %}
+    <span>Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ recherche }}">›</a>{% endif %}
+  </div>
+</section>
+{% endblock %}

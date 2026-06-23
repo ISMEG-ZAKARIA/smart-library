@@ -1,0 +1,76 @@
+{% extends 'base/base.html' %} {% block title %}Tableau de bord bibliothécaire{%
+endblock %} {% block content %}
+<header class="page-head">
+  <div>
+    <h1>Tableau de bord</h1>
+    <p>Priorités du comptoir et contrôles à traiter.</p>
+  </div>
+</header>
+<section class="kpi-grid four">
+  <article class="kpi">
+    <span>Réservations à valider</span
+    ><strong>{{ reservations_a_valider }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Emprunts actifs</span><strong>{{ emprunts_actifs }}</strong>
+  </article>
+  <article class="kpi warning">
+    <span>Retards actifs</span><strong>{{ retours_retard }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Pénalités ouvertes</span><strong>{{ penalites_ouvertes }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Emprunts terminés</span><strong>{{ emprunts_termines }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Pénalités réglées</span><strong>{{ penalites_reglees }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Livres disponibles</span><strong>{{ livres_disponibles }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Montant ouvert</span
+    ><strong>{{ montant_penalites_ouvertes }} DH</strong>
+  </article>
+</section>
+<section class="panel">
+  <div class="panel-head">
+    <h2>Activité récente</h2>
+    <div>
+      <a class="btn btn-primary btn-small" href="{% url 'loans:validations' %}"
+        >Vérifier un emprunt</a
+      >
+      <a class="btn btn-secondary btn-small" href="{% url 'loans:retours' %}"
+        >Vérifier un retour</a
+      >
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Livre</th>
+          <th>Échéance</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in emprunts_recents %}
+        <tr>
+          <td>{{ item.client }}</td>
+          <td>{{ item.livre }}</td>
+          <td>{{ item.retour_prevu_le|date:'d/m/Y' }}</td>
+          <td><span class="pill">{{ item.get_statut_display }}</span></td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">Aucun emprunt.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion — Smart Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/smart_library.css' %}">
+</head>
+<body class="client-login-page">
+  {% if messages %}<div class="messages">{% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  <main class="client-login-shell">
+    <section class="client-login-card">
+      <span class="client-login-icon material-symbols-outlined">menu_book</span>
+      <h1>Authentification</h1>
+      <p>Veuillez entrer vos identifiants pour accéder au portail.</p>
+
+      <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="client-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="client-login-field">
+          <label for="{{ form.username.id_for_label }}">Adresse e-mail</label>
+          <div><span class="material-symbols-outlined">person</span>{{ form.username }}</div>
+          {{ form.username.errors }}
+        </div>
+        <div class="client-login-field">
+          <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+          <div><span class="material-symbols-outlined">lock</span>{{ form.password }}<button type="button" data-password-toggle aria-label="Afficher le mot de passe"><span class="material-symbols-outlined">visibility</span></button></div>
+          {{ form.password.errors }}
+        </div>
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <button class="client-login-submit" type="submit">Se connecter <span class="material-symbols-outlined">login</span></button>
+      </form>
+      <p class="client-login-register">Nouveau client ? <a href="{% url 'accounts:inscription' %}">Créer un compte</a></p>
+    </section>
+  </main>
+  <script src="{% static 'js/smart_library.js' %}" defer></script>
+</body>
+</html>

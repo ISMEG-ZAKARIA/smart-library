@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portail Bibliothécaire - Smart Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar" aria-label="Navigation bibliothécaire">
+    <a class="brand" href="#dashboard" aria-label="Smart Library - Tableau de bord">
+      <img class="brand-logo" src="assets/logo.png" alt="Logo Smart Library">
+      <span>
+        <strong>Smart Library</strong>
+        <small>Espace bibliothécaire</small>
+      </span>
+    </a>
+
+    <nav class="side-nav" aria-label="Pages principales">
+      <a href="#dashboard" data-nav-link="dashboard">
+        <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        <span>Tableau de bord</span>
+      </a>
+      <a href="#catalogue" data-nav-link="catalogue">
+        <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
+        <span>Catalogue</span>
+      </a>
+      <a href="#historique" data-nav-link="historique">
+        <span class="material-symbols-outlined" aria-hidden="true">manage_search</span>
+        <span>Historique utilisateurs</span>
+      </a>
+      <a href="#emprunts" data-nav-link="emprunts">
+        <span class="material-symbols-outlined" aria-hidden="true">assignment_turned_in</span>
+        <span>Validation emprunts</span>
+      </a>
+      <a href="#retours" data-nav-link="retours">
+        <span class="material-symbols-outlined" aria-hidden="true">fact_check</span>
+        <span>Validation retours</span>
+      </a>
+      <a href="#penalites-anomalies" data-nav-link="penalites-anomalies">
+        <span class="material-symbols-outlined" aria-hidden="true">report</span>
+        <span>Pénalités &amp; anomalies</span>
+      </a>
+    </nav>
+
+    <nav class="sidebar-foot" aria-label="Compte">
+      <button type="button" class="sidebar-logout" data-action="logout">
+        <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+        <span>Déconnexion</span>
+      </button>
+    </nav>
+  </aside>
+
+  <header class="topbar">
+    <div class="workspace-label">
+      <span class="material-symbols-outlined" aria-hidden="true">local_library</span>
+      <span>Portail Bibliothécaire</span>
+    </div>
+
+    <form class="top-search" id="topSearchForm" role="search">
+      <label class="sr-only" for="topSearch">Recherche globale</label>
+      <span class="material-symbols-outlined" aria-hidden="true">search</span>
+      <input id="topSearch" type="search" autocomplete="off" placeholder="Rechercher livre, utilisateur, ISBN...">
+    </form>
+
+    <div class="topbar-actions" aria-label="Actions rapides">
+      <button type="button" class="icon-button" aria-label="Notifications">
+        <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+      </button>
+      <button type="button" class="icon-button" aria-label="Historique récent">
+        <span class="material-symbols-outlined" aria-hidden="true">history</span>
+      </button>
+      <button type="button" class="avatar-button" aria-label="Profil bibliothécaire">
+        <img src="assets/profile-librarian.png" alt="Profil bibliothécaire">
+      </button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" aria-label="Navigation mobile">
+    <a href="#dashboard" data-nav-link="dashboard">Tableau de bord</a>
+    <a href="#catalogue" data-nav-link="catalogue">Catalogue</a>
+    <a href="#historique" data-nav-link="historique">Historique</a>
+    <a href="#emprunts" data-nav-link="emprunts">Emprunts</a>
+    <a href="#retours" data-nav-link="retours">Retours</a>
+    <a href="#penalites-anomalies" data-nav-link="penalites-anomalies">Pénalités</a>
+  </nav>
+
+  <main class="main-content">
+    <div id="app" class="content-wrapper" tabindex="-1"></div>
+  </main>
+
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

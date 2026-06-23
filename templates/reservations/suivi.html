@@ -1,0 +1,8 @@
+{% extends 'base/base.html' %}
+{% block title %}Suivi des réservations{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Suivi des Réservations</h1><p>Toutes les interfaces lisent cette même table relationnelle.</p></div></header>
+<form class="toolbar" method="get"><select name="statut"><option value="">Tous les statuts</option>{% for valeur,libelle in statuts %}<option value="{{ valeur }}" {% if statut_actif == valeur %}selected{% endif %}>{{ libelle }}</option>{% endfor %}</select><button class="btn btn-secondary" type="submit">Filtrer</button></form>
+<section class="panel table-wrap"><table><thead><tr><th>Client</th><th>Livre</th><th>Création</th><th>Expiration</th><th>Statut</th><th>Décision</th></tr></thead><tbody>{% for item in reservations %}<tr><td><strong>{{ item.client }}</strong><small>{{ item.client.email }}</small></td><td>{{ item.livre }}</td><td>{{ item.reservee_le|date:'d/m/Y H:i' }}</td><td>{{ item.expire_le|date:'d/m/Y H:i' }}</td><td><span class="pill {% if item.statut == 'ACTIVE' %}pill-success{% elif item.statut == 'REFUSED' or item.statut == 'EXPIRED' %}pill-danger{% else %}pill-warning{% endif %}">{{ item.get_statut_display }}</span></td><td>{% if item.statut == 'ACTIVE' %}<form class="inline-form" method="post" action="{% url 'reservations:refuser' item.pk %}">{% csrf_token %}<input name="motif" required aria-label="Motif du refus" placeholder="Motif du refus"><button class="btn btn-danger btn-small" type="submit">Refuser</button></form>{% elif item.traitee_par %}{{ item.traitee_par }}<small>{{ item.motif_refus }}</small>{% else %}—{% endif %}</td></tr>{% empty %}<tr><td colspan="6">Aucune réservation persistée.</td></tr>{% endfor %}</tbody></table></section>
+{% endblock %}
+

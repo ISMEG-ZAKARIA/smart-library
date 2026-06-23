@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Profil bibliothecaire</title>
+  <desc id="desc">Avatar professionnel pour l'espace bibliothecaire Smart Library.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f7f3f2"/>
+      <stop offset="1" stop-color="#e5e5e5"/>
+    </linearGradient>
+    <linearGradient id="jacket" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2d2d2d"/>
+      <stop offset="1" stop-color="#181919"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="256" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="238" fill="none" stroke="#d4af37" stroke-width="12"/>
+  <path d="M96 432c20-78 78-122 160-122s140 44 160 122" fill="url(#jacket)"/>
+  <path d="M194 336l62 84 62-84c-18-12-39-18-62-18s-44 6-62 18z" fill="#ffffff"/>
+  <path d="M218 340l38 52 38-52c-13 6-25 9-38 9s-25-3-38-9z" fill="#ebe7e7"/>
+  <path d="M162 214c-10-84 28-142 94-142s104 58 94 142c-10-26-30-43-62-52-33-10-71-7-100 8-11 6-20 20-26 44z" fill="#3a302c"/>
+  <path d="M172 224c0-68 32-112 84-112s84 44 84 112v26c0 58-37 102-84 102s-84-44-84-102v-26z" fill="#c98f68"/>
+  <path d="M172 226c8-36 28-57 62-66 32-8 67-1 98 22 4 13 6 27 6 44v4c-44-7-80-24-108-50-21 13-40 29-58 46z" fill="#4a342d"/>
+  <path d="M151 240c0-17 10-30 23-30v62c-13 0-23-14-23-32z" fill="#b97955"/>
+  <path d="M338 210c13 0 23 13 23 30s-10 32-23 32v-62z" fill="#b97955"/>
+  <path d="M218 274c20 16 56 16 76 0" fill="none" stroke="#7a4c3b" stroke-width="8" stroke-linecap="round"/>
+  <path d="M205 228h40M267 228h40" fill="none" stroke="#181919" stroke-width="8" stroke-linecap="round"/>
+  <path d="M246 246h20" fill="none" stroke="#181919" stroke-width="6" stroke-linecap="round"/>
+  <rect x="198" y="214" width="54" height="38" rx="18" fill="none" stroke="#181919" stroke-width="8"/>
+  <rect x="260" y="214" width="54" height="38" rx="18" fill="none" stroke="#181919" stroke-width="8"/>
+  <path d="M252 233h8" fill="none" stroke="#181919" stroke-width="8" stroke-linecap="round"/>
+  <path d="M206 116c23-25 72-29 103-7 29 21 42 61 34 103-43-19-77-43-101-73-16 23-38 41-68 54 1-31 11-57 32-77z" fill="#2d2421"/>
+  <path d="M132 424h248" fill="none" stroke="#d4af37" stroke-width="10" stroke-linecap="round"/>
+  <path d="M328 362h48v42h-48z" fill="#735c00"/>
+  <path d="M338 372h28M338 384h28M338 396h21" stroke="#ffe088" stroke-width="5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,192 @@
+{% extends 'base/base.html' %}
+{% block title %}Paramètres — Smart Library{% endblock %}
+{% block content %}
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            corePlugins: {
+                preflight: false,
+            },
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#e9c349",
+                        "inverse-primary": "#c8c6c6",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffe088",
+                        "inverse-on-surface": "#f0f1f1",
+                        "primary": "#181919",
+                        "primary-container": "#2d2d2d",
+                        "on-secondary-container": "#745c00",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface-variant": "#444748",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed-dim": "#c8c6c6",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#747878",
+                        "secondary": "#735c00",
+                        "on-primary-fixed": "#1b1c1c",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "primary-fixed": "#e4e2e1",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#939494",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#959494",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f3f4",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "surface": "#f9f9f9",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed-variant": "#574500",
+                        "tertiary-container": "#2b2d2d",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "tertiary": "#161919",
+                        "inverse-surface": "#2f3131",
+                        "outline-variant": "#c4c7c7",
+                        "secondary-container": "#fed65b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sidebar_width": "260px",
+                        "topbar_height": "64px",
+                        "gutter": "24px",
+                        "margin_md": "32px",
+                        "margin_sm": "16px",
+                        "container_max_width": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Courier Prime"],
+                        "title-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    }
+                }
+            }
+        }
+</script>
+
+<div class="p-margin_md max-w-[1200px] mx-auto w-full">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-on-surface mb-1" style="font-size: 1.5rem; line-height: 2rem;">Paramètres</h1>
+    <p class="text-sm text-on-surface-variant">Personnalisez votre compte et gérez vos préférences d'utilisation.</p>
+  </div>
+  <div class="grid grid-cols-1 gap-6">
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <h3 class="text-sm font-bold text-secondary uppercase tracking-widest mb-4">Compte</h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between py-2 border-b border-surface-variant">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-outline uppercase">Email</span>
+            <span class="text-sm font-medium">{{ request.user.email }}</span>
+          </div>
+          <button class="px-4 py-1.5 bg-surface-container hover:bg-secondary hover:text-white transition-colors rounded-lg text-[11px] font-bold uppercase tracking-wider">Modifier</button>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-outline uppercase">Téléphone</span>
+            <span class="text-sm font-medium">{{ request.user.telephone|default:"+212 6 12 34 56 78" }}</span>
+          </div>
+          <button class="px-4 py-1.5 bg-surface-container hover:bg-secondary hover:text-white transition-colors rounded-lg text-[11px] font-bold uppercase tracking-wider">Modifier</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <h3 class="text-sm font-bold text-secondary uppercase tracking-widest mb-4">Sécurité</h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between py-2 border-b border-surface-variant">
+          <div class="flex flex-col">
+            <span class="text-sm font-medium">Changer mot de passe</span>
+          </div>
+          <button class="px-4 py-1.5 bg-surface-container hover:bg-secondary hover:text-white transition-colors rounded-lg text-[11px] font-bold uppercase tracking-wider">Mettre à jour</button>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex flex-col">
+            <span class="text-sm font-medium">Authentification à deux facteurs</span>
+            <span class="text-xs text-error font-medium">Désactivée</span>
+          </div>
+          <button class="px-4 py-1.5 bg-primary text-on-primary hover:bg-secondary transition-colors rounded-lg text-[11px] font-bold uppercase tracking-wider">Activer</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <h3 class="text-sm font-bold text-secondary uppercase tracking-widest mb-4">Notifications</h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between py-2 border-b border-surface-variant">
+          <span class="text-sm font-medium">Réservations</span>
+          <div class="w-10 h-5 bg-secondary rounded-full relative cursor-pointer">
+            <div class="absolute right-1 top-1 size-3 bg-white rounded-full"></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-surface-variant">
+          <span class="text-sm font-medium">Alertes</span>
+          <div class="w-10 h-5 bg-secondary rounded-full relative cursor-pointer">
+            <div class="absolute right-1 top-1 size-3 bg-white rounded-full"></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-surface-variant">
+          <span class="text-sm font-medium">Pénalités</span>
+          <div class="w-10 h-5 bg-secondary rounded-full relative cursor-pointer">
+            <div class="absolute right-1 top-1 size-3 bg-white rounded-full"></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <span class="text-sm font-medium">Nouveautés catalogue</span>
+          <div class="w-10 h-5 bg-surface-container-highest rounded-full relative cursor-pointer">
+            <div class="absolute left-1 top-1 size-3 bg-white rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <h3 class="text-sm font-bold text-secondary uppercase tracking-widest mb-4">Préférences</h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between py-2 border-b border-surface-variant">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-outline uppercase">Langue</span>
+            <span class="text-sm font-medium">Français</span>
+          </div>
+          <button class="px-4 py-1.5 bg-surface-container hover:bg-secondary hover:text-white transition-colors rounded-lg text-[11px] font-bold uppercase tracking-wider">Modifier</button>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-outline uppercase">Thème</span>
+            <span class="text-sm font-medium">Clair</span>
+          </div>
+          <button class="px-4 py-1.5 bg-surface-container hover:bg-secondary hover:text-white transition-colors rounded-lg text-[11px] font-bold uppercase tracking-wider">Modifier</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="bg-surface-container-low border border-outline-variant rounded-lg p-4 flex items-start gap-3">
+      <span class="material-symbols-outlined text-secondary">info</span>
+      <p class="text-xs text-on-surface-variant leading-relaxed">Les paramètres sont enregistrés automatiquement. Aucune action supplémentaire n'est nécessaire après modification.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

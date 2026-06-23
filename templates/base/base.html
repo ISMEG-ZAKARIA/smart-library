@@ -1,0 +1,100 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Smart Library{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/smart_library.css' %}">
+</head>
+<body class="{% if request.user.is_authenticated and request.user.est_client %}client-portal{% endif %} {% block body_class %}{% endblock %}">
+{% if request.user.is_authenticated %}
+  <aside class="sidebar {% if request.user.est_client %}client-sidebar{% endif %}" id="sidebar">
+    {% if request.user.est_client %}
+      <a class="brand client-brand" href="{% url 'accounts:accueil' %}">
+        <span class="client-brand-mark"><img src="{% static 'images/logo.png' %}" alt="Logo Smart Library"></span>
+        <strong>SMART LIBRARY</strong>
+      </a>
+      <nav class="client-nav">
+        <span class="client-nav-label">Mon espace</span>
+        <a class="{% if request.resolver_match.url_name == 'accueil' %}active{% endif %}" href="{% url 'accounts:accueil' %}"><span class="material-symbols-outlined">grid_view</span>Tableau de bord</a>
+
+        <span class="client-nav-label">Bibliothèque</span>
+        <a class="{% if request.resolver_match.namespace == 'catalog' %}active{% endif %}" href="{% url 'catalog:catalogue' %}"><span class="material-symbols-outlined">menu_book</span>Catalogue</a>
+        <a class="{% if request.resolver_match.namespace == 'reservations' %}active{% endif %}" href="{% url 'reservations:liste' %}"><span class="material-symbols-outlined">folder_open</span>Mes réservations</a>
+        <a class="{% if request.resolver_match.namespace == 'loans' %}active{% endif %}" href="{% url 'loans:historique' %}"><span class="material-symbols-outlined">history_edu</span>Historique des emprunts</a>
+
+        <span class="client-nav-label">Mon compte</span>
+        <a class="{% if request.resolver_match.namespace == 'alerts' %}active{% endif %}" href="{% url 'alerts:liste' %}"><span class="material-symbols-outlined">notifications</span>Alertes{% if nombre_notifications_non_lues %}<b class="client-nav-count">{{ nombre_notifications_non_lues }}</b>{% endif %}</a>
+        <a class="{% if request.resolver_match.namespace == 'penalties' %}active{% endif %}" href="{% url 'penalties:liste' %}"><span class="material-symbols-outlined">error</span>Pénalités</a>
+        <a class="{% if request.resolver_match.url_name == 'profil' %}active{% endif %}" href="{% url 'accounts:profil' %}"><span class="material-symbols-outlined">person</span>Profil</a>
+
+        <span class="client-nav-separator"></span>
+        <span class="client-nav-label">Session</span>
+        <a class="{% if request.resolver_match.url_name == 'client_parametres' %}active{% endif %}" href="{% url 'accounts:client_parametres' %}"><span class="material-symbols-outlined">settings</span>Paramètres</a>
+      </nav>
+      <form class="sidebar-logout client-logout" method="post" action="{% url 'accounts:deconnexion' %}">{% csrf_token %}<button type="submit"><span class="material-symbols-outlined">logout</span>Déconnexion</button></form>
+    {% else %}
+      <a class="brand" href="{% url 'accounts:accueil' %}">
+        <img src="{% static 'images/logo.png' %}" alt="Logo Smart Library">
+        <span><strong>SMART<br>LIBRARY</strong><small>{{ request.user.get_role_display }}</small></span>
+      </a>
+      <nav>
+        <a href="{% url 'accounts:accueil' %}"><span class="material-symbols-outlined">dashboard</span>Tableau de bord</a>
+        <a href="{% url 'catalog:catalogue' %}"><span class="material-symbols-outlined">menu_book</span>Catalogue</a>
+        {% if request.user.est_bibliothecaire %}
+          <a href="{% url 'reservations:suivi' %}"><span class="material-symbols-outlined">bookmarks</span>Suivi réservations</a>
+          <a href="{% url 'loans:validations' %}"><span class="material-symbols-outlined">assignment_turned_in</span>Validation emprunts</a>
+          <a href="{% url 'loans:retours' %}"><span class="material-symbols-outlined">fact_check</span>Validation retours</a>
+          <a href="{% url 'loans:suivi' %}"><span class="material-symbols-outlined">history</span>Suivi emprunts</a>
+          <a href="{% url 'penalties:liste' %}"><span class="material-symbols-outlined">report</span>Pénalités & anomalies</a>
+        {% else %}
+          <a href="{% url 'accounts:utilisateurs' %}"><span class="material-symbols-outlined">group</span>Gestion utilisateurs</a>
+          <a href="{% url 'reservations:suivi' %}"><span class="material-symbols-outlined">bookmarks</span>Réservations</a>
+          <a href="{% url 'loans:suivi' %}"><span class="material-symbols-outlined">history</span>Emprunts</a>
+          <a href="{% url 'penalties:liste' %}"><span class="material-symbols-outlined">gavel</span>Pénalités</a>
+          <a href="{% url 'accounts:statistiques' %}"><span class="material-symbols-outlined">analytics</span>Statistiques</a>
+          <a href="{% url 'abuse:centre' %}"><span class="material-symbols-outlined">shield</span>Détection des abus</a>
+          <a href="{% url 'audit:journal' %}"><span class="material-symbols-outlined">history</span>Journal d'audit</a>
+          <a href="{% url 'accounts:parametres' %}"><span class="material-symbols-outlined">settings</span>Paramètres</a>
+        {% endif %}
+      </nav>
+      <form class="sidebar-logout" method="post" action="{% url 'accounts:deconnexion' %}">{% csrf_token %}<button type="submit"><span class="material-symbols-outlined">logout</span>Déconnexion</button></form>
+    {% endif %}
+  </aside>
+
+  {% if request.user.est_client %}
+    <header class="topbar client-topbar">
+      <button class="mobile-menu" type="button" data-menu aria-label="Menu"><span class="material-symbols-outlined">menu</span></button>
+      <div class="client-topbar-title"><span class="material-symbols-outlined">{% block client_topbar_icon %}menu_book{% endblock %}</span><strong>{% block client_topbar_title %}Smart Library{% endblock %}</strong></div>
+      <form class="client-global-search" method="get" action="{% url 'catalog:catalogue' %}">
+        <span class="material-symbols-outlined">search</span>
+        <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Rechercher par titre, auteur ou ISBN…" aria-label="Rechercher dans le catalogue">
+      </form>
+      <a class="client-user-chip" href="{% url 'accounts:profil' %}">
+        <span><strong>{{ request.user.get_full_name|default:request.user.username }}</strong><small>CLIENT</small></span>
+        <span class="client-avatar"><img src="{% static 'images/profile.png' %}" alt="Profil"><i></i></span>
+      </a>
+    </header>
+  {% else %}
+    <header class="topbar">
+      <button class="mobile-menu" type="button" data-menu aria-label="Menu"><span class="material-symbols-outlined">menu</span></button>
+      <strong>Portail {{ request.user.get_role_display }}</strong>
+      <div class="top-actions">
+        <a class="notification-button" href="{% url 'alerts:liste' %}" aria-label="Notifications"><span class="material-symbols-outlined">notifications</span>{% if nombre_notifications_non_lues %}<b>{{ nombre_notifications_non_lues }}</b>{% endif %}</a>
+        <a class="avatar" href="{% url 'accounts:profil' %}">{{ request.user.first_name|first|default:request.user.username|first }}{{ request.user.last_name|first }}</a>
+      </div>
+    </header>
+  {% endif %}
+{% endif %}
+
+  <main class="{% if request.user.is_authenticated %}{% if request.user.est_client %}main-content client-main-content{% else %}main-content{% endif %}{% else %}auth-main{% endif %}">
+    {% if messages %}<div class="messages">{% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{% static 'js/smart_library.js' %}" defer></script>
+</body>
+</html>

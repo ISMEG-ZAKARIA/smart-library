@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+{% block title %}{{ livre.titre }}{% endblock %}
+{% block client_topbar_icon %}menu_book{% endblock %}
+{% block client_topbar_title %}Catalogue{% endblock %}
+{% block content %}
+{% if request.user.est_client %}
+<div class="client-breadcrumb"><a href="{% url 'accounts:accueil' %}">Accueil</a><span class="material-symbols-outlined">chevron_right</span><a href="{% url 'catalog:catalogue' %}">Catalogue</a><span class="material-symbols-outlined">chevron_right</span><strong>Détail de l'ouvrage</strong></div>
+<section class="client-book-detail">
+  <div>
+    <div class="client-detail-cover">
+      {% if livre.couverture %}<img src="{{ livre.couverture.url }}" alt="Couverture de {{ livre.titre }}">{% else %}<span>{{ livre.titre|first }}</span>{% endif %}
+      <b class="client-book-state {% if livre.statut != 'AVAILABLE' %}muted{% endif %}">{{ livre.get_statut_display }}</b>
+    </div>
+    <dl class="client-book-facts client-surface">
+      <div><dt>ISBN</dt><dd>{{ livre.isbn }}</dd></div>
+      <div><dt>Catégorie</dt><dd>{{ livre.categorie }}</dd></div>
+      <div><dt>Publication</dt><dd>{{ livre.annee_publication|default:'—' }}</dd></div>
+      <div><dt>Éditeur</dt><dd>{{ livre.editeur|default:'—' }}</dd></div>
+    </dl>
+  </div>
+  <div class="client-detail-content">
+    <h1>{{ livre.titre }}</h1>
+    <p class="client-detail-authors">{% for auteur in livre.auteurs.all %}{{ auteur }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    <p class="client-rating"><span class="material-symbols-outlined">favorite</span>{% if note_moyenne %}{{ note_moyenne|floatformat:1 }}/5{% else %}Pas encore noté{% endif %}</p>
+    {% if reservation_active %}
+      <span class="client-primary-button disabled"><span class="material-symbols-outlined">bookmark_added</span>Déjà réservé</span>
+    {% elif livre.statut == 'AVAILABLE' %}
+      <form method="post" action="{% url 'reservations:creer' livre.pk %}">{% csrf_token %}<button class="client-primary-button client-detail-reserve" type="submit">Réserver l'ouvrage</button></form>
+    {% else %}
+      <span class="client-primary-button disabled">Ouvrage indisponible</span>
+    {% endif %}
+    <div class="client-info-banner"><span class="material-symbols-outlined">info</span><p>Après réservation, retirez l'ouvrage avant la date d'expiration indiquée dans votre espace.</p></div>
+    <section class="client-synopsis"><h2>Synopsis</h2><p>{{ livre.description }}</p></section>
+    <section class="client-reviews">
+      <h2>Avis des lecteurs</h2>
+      {% for avis in livre.commentaires.all %}<article><div><strong>{{ avis.client }}</strong><span>{{ avis.note }}/5</span></div><p>{{ avis.texte }}</p></article>{% empty %}<p class="client-empty">Aucun avis publié.</p>{% endfor %}
+      <form method="post" class="client-review-form">{% csrf_token %}{{ form.as_p }}<button class="client-outline-button" type="submit">Publier mon avis</button></form>
+    </section>
+  </div>
+</section>
+{% else %}
+<a class="back-link" href="{% url 'catalog:catalogue' %}">← Retour au catalogue</a><section class="book-detail panel">{% if livre.couverture %}<img src="{{ livre.couverture.url }}" alt="Couverture de {{ livre.titre }}">{% else %}<div class="book-placeholder large">{{ livre.titre|first }}</div>{% endif %}<div><span class="pill {% if livre.statut == 'AVAILABLE' %}pill-success{% elif livre.statut == 'RESERVED' %}pill-warning{% else %}pill-danger{% endif %}">{{ livre.get_statut_display }}</span><h1>{{ livre.titre }}</h1><p class="book-authors">{% for auteur in livre.auteurs.all %}{{ auteur }}{% if not forloop.last %}, {% endif %}{% endfor %}</p><p>{{ livre.description }}</p><dl><dt>ISBN</dt><dd>{{ livre.isbn }}</dd><dt>Catégorie</dt><dd>{{ livre.categorie }}</dd><dt>Éditeur</dt><dd>{{ livre.editeur|default:'—' }}</dd><dt>Disponibilité</dt><dd>{{ livre.stock_disponible }} exemplaire(s)</dd></dl><div class="page-actions"><a class="btn btn-primary" href="{% url 'catalog:modifier' livre.pk %}">Modifier la fiche</a>{% if livre.actif %}<form method="post" action="{% url 'catalog:desactiver' livre.pk %}">{% csrf_token %}<input type="hidden" name="motif" value="Retrait décidé depuis la fiche du livre"><button class="btn btn-danger" type="submit">Retirer du catalogue</button></form>{% endif %}</div></div></section><section class="panel"><div class="panel-head"><h2>Avis des lecteurs</h2></div>{% for avis in livre.commentaires.all %}<article class="review"><strong>{{ avis.client }}</strong><span>{{ avis.note }}/5</span><p>{{ avis.texte }}</p></article>{% empty %}<p class="empty">Aucun avis publié.</p>{% endfor %}</section>
+{% endif %}
+{% endblock %}

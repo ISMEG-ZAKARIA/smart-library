@@ -1,0 +1,68 @@
+{% extends 'base/base.html' %} {% block title %}Tableau de bord{% endblock %} {%
+block client_topbar_icon %}grid_view{% endblock %} {% block client_topbar_title
+%}Tableau de bord{% endblock %} {% block content %}
+<header class="client-page-head client-dashboard-head">
+  <div>
+    <h1>Bonjour {{ request.user.first_name|default:request.user.username }}</h1>
+    <p>Suivez vos emprunts, réservations et alertes depuis un seul espace.</p>
+  </div>
+  <a class="client-primary-button" href="{% url 'catalog:catalogue' %}"
+    >Explorer le catalogue</a
+  >
+</header>
+<section class="client-kpi-grid four">
+  <article>
+    <span>Emprunts actifs</span><strong>{{ emprunts_actifs }}</strong>
+  </article>
+  <article>
+    <span>Réservations actives</span><strong>{{ reservations_actives }}</strong>
+  </article>
+  <article>
+    <span>Pénalités ouvertes</span
+    ><strong class="{% if penalites_ouvertes %}danger-text{% endif %}"
+      >{{ penalites_ouvertes }}</strong
+    ><small>{{ montant_penalites_ouvertes }} DH</small>
+  </article>
+  <article>
+    <span>Notifications non lues</span
+    ><strong>{{ notifications_non_lues }}</strong>
+  </article>
+</section>
+<section class="client-dashboard-panel client-surface">
+  <div class="client-panel-head">
+    <h2>Derniers emprunts</h2>
+    <a href="{% url 'loans:historique' %}">Voir l'historique</a>
+  </div>
+  <div class="client-loan-list compact">
+    {% for item in emprunts_recents %}
+    <article class="client-loan-card">
+      <div class="client-loan-book">
+        {% if item.livre.couverture %}<img
+          src="{{ item.livre.couverture.url }}"
+          alt="Couverture de {{ item.livre.titre }}"
+        />{% else %}<span class="client-mini-cover"
+          >{{ item.livre.titre|first }}</span
+        >{% endif %}
+        <div>
+          <h2>{{ item.livre.titre }}</h2>
+          <p>Emprunté le {{ item.emprunte_le|date:'d/m/Y' }}</p>
+        </div>
+      </div>
+      <dl>
+        <div>
+          <dt>Retour prévu</dt>
+          <dd>{{ item.retour_prevu_le|date:'d/m/Y' }}</dd>
+        </div>
+      </dl>
+      <span
+        class="client-loan-state {% if item.jours_retard %}danger{% else %}warning{% endif %}"
+        >{% if item.jours_retard %}En retard{% else %}{{ item.get_statut_display
+        }}{% endif %}</span
+      >
+    </article>
+    {% empty %}
+    <p class="client-empty">Votre historique est vide.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

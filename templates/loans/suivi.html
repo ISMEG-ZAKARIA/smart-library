@@ -1,0 +1,8 @@
+{% extends 'base/base.html' %}
+{% block title %}Suivi des emprunts{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Suivi des Emprunts</h1><p>Emprunts actifs, inspections et retours issus de la table unique.</p></div></header>
+<form class="toolbar" method="get"><select name="statut"><option value="">Tous les statuts</option>{% for valeur,libelle in statuts %}<option value="{{ valeur }}" {% if statut_actif == valeur %}selected{% endif %}>{{ libelle }}</option>{% endfor %}</select><button class="btn btn-secondary" type="submit">Filtrer</button></form>
+<section class="panel table-wrap"><table><thead><tr><th>Client</th><th>Livre</th><th>Début</th><th>Échéance</th><th>Retour</th><th>Statut</th><th>Validé par</th></tr></thead><tbody>{% for item in emprunts %}<tr><td><strong>{{ item.client }}</strong><small>{{ item.client.email }}</small></td><td>{{ item.livre }}</td><td>{{ item.emprunte_le|date:'d/m/Y' }}</td><td>{{ item.retour_prevu_le|date:'d/m/Y' }}</td><td>{{ item.retourne_le|date:'d/m/Y'|default:'—' }}</td><td><span class="pill {% if item.statut == 'ACTIVE' and item.jours_retard %}pill-danger{% elif item.statut == 'RETURNED' %}pill-success{% else %}pill-warning{% endif %}">{{ item.get_statut_display }}</span></td><td>{{ item.valide_par|default:'Système' }}</td></tr>{% empty %}<tr><td colspan="7">Aucun emprunt persisté.</td></tr>{% endfor %}</tbody></table></section>
+{% endblock %}
+

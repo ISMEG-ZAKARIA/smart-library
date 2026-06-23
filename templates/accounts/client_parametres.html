@@ -1,0 +1,45 @@
+{% extends 'base/base.html' %}
+{% block title %}Paramètres{% endblock %}
+{% block client_topbar_icon %}settings{% endblock %}
+{% block client_topbar_title %}Paramètres{% endblock %}
+{% block content %}
+<header class="client-page-head">
+  <h1>Paramètres</h1>
+  <p>Personnalisez votre compte et gérez vos préférences d'utilisation.</p>
+</header>
+
+<form method="post" class="client-settings-form">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="client-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+
+  <section class="client-settings-card client-surface">
+    <h2>Compte</h2>
+    <div class="client-settings-grid">
+      <div class="field"><label>Prénom</label><input type="text" value="{{ request.user.first_name }}" disabled><small>Identité enregistrée avec votre CIN.</small></div>
+      <div class="field"><label>Nom</label><input type="text" value="{{ request.user.last_name }}" disabled><small>Identité enregistrée avec votre CIN.</small></div>
+      <div class="field"><label for="{{ form.telephone.id_for_label }}">Téléphone</label>{{ form.telephone }}{{ form.telephone.errors }}</div>
+      <div class="field"><label>Email</label><input type="email" value="{{ request.user.email }}" disabled><small>L'adresse e-mail sert à la connexion.</small></div>
+    </div>
+  </section>
+
+  <section class="client-settings-card client-surface">
+    <h2>Sécurité</h2>
+    <div class="client-setting-line"><div><strong>Mot de passe</strong><span>Protégé par les règles de sécurité Smart Library.</span></div><span class="client-neutral-badge">Sécurisé</span></div>
+    <div class="client-setting-line"><div><strong>Authentification à deux facteurs</strong><span>{% if request.user.deux_facteurs_actif %}Activée{% else %}Désactivée{% endif %}</span></div><span class="client-neutral-badge {% if request.user.deux_facteurs_actif %}active{% endif %}">{% if request.user.deux_facteurs_actif %}Active{% else %}Inactive{% endif %}</span></div>
+  </section>
+
+  <section class="client-settings-card client-surface">
+    <h2>Notifications</h2>
+    <label class="client-setting-line client-toggle-line" for="{{ form.notifications_email.id_for_label }}">
+      <div><strong>Notifications par e-mail</strong><span>Recevoir les confirmations, alertes et pénalités importantes.</span></div>
+      {{ form.notifications_email }}<i aria-hidden="true"></i>
+    </label>
+    {{ form.notifications_email.errors }}
+  </section>
+
+  <div class="client-settings-actions">
+    <a class="client-outline-button" href="{% url 'accounts:profil' %}">Annuler</a>
+    <button class="client-primary-button" type="submit">Enregistrer les paramètres</button>
+  </div>
+</form>
+{% endblock %}

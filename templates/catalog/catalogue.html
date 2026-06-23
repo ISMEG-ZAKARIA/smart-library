@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+{% block title %}Catalogue{% endblock %}
+{% block client_topbar_icon %}menu_book{% endblock %}
+{% block client_topbar_title %}Catalogue{% endblock %}
+{% block content %}
+{% if request.user.est_client %}
+<div class="client-breadcrumb"><a href="{% url 'accounts:accueil' %}">Accueil</a><span class="material-symbols-outlined">chevron_right</span><strong>Catalogue</strong></div>
+<div class="client-filter-row">
+  <p>{{ page_obj.paginator.count }} ouvrage{{ page_obj.paginator.count|pluralize }} dans votre catalogue</p>
+  <nav aria-label="Filtres du catalogue">
+    <a class="{% if filtre == 'tous' %}active{% endif %}" href="?q={{ q }}&filtre=tous">Tous</a>
+    <a class="{% if filtre == 'disponibles' %}active{% endif %}" href="?q={{ q }}&filtre=disponibles">Disponibles</a>
+    <a class="{% if filtre == 'populaires' %}active{% endif %}" href="?q={{ q }}&filtre=populaires">Populaires</a>
+    <a class="{% if filtre == 'nouveautes' %}active{% endif %}" href="?q={{ q }}&filtre=nouveautes">Nouveautés</a>
+  </nav>
+</div>
+
+<section class="client-book-grid">
+  {% for livre in page_obj %}
+  <article class="client-book-card">
+    <a class="client-book-cover" href="{% url 'catalog:detail' livre.pk %}">
+      {% if livre.couverture %}<img src="{{ livre.couverture.url }}" alt="Couverture de {{ livre.titre }}">{% else %}<span>{{ livre.titre|first }}</span>{% endif %}
+      <b class="client-book-state {% if livre.statut != 'AVAILABLE' %}muted{% endif %}">{{ livre.get_statut_display }}</b>
+    </a>
+    <div class="client-book-body">
+      <div class="client-book-meta"><span>{{ livre.categorie }}</span><small><span class="material-symbols-outlined">reviews</span>{{ livre.popularite }}</small></div>
+      <h2>{{ livre.titre }}</h2>
+      <p>{% for auteur in livre.auteurs.all %}{{ auteur }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      <code>ISBN: {{ livre.isbn }}</code>
+      <a class="client-book-link" href="{% url 'catalog:detail' livre.pk %}">Voir détails <span class="material-symbols-outlined">arrow_forward</span></a>
+    </div>
+  </article>
+  {% empty %}<div class="client-empty client-surface">Aucun ouvrage ne correspond à votre recherche.</div>{% endfor %}
+</section>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="client-pagination">
+  {% if page_obj.has_previous %}<a href="?q={{ q }}&filtre={{ filtre }}&page={{ page_obj.previous_page_number }}">Précédent</a>{% endif %}
+  <span>Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?q={{ q }}&filtre={{ filtre }}&page={{ page_obj.next_page_number }}">Suivant</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<header class="page-head"><div><h1>Catalogue</h1><p>Recherchez un ouvrage par titre, auteur ou ISBN.</p></div><a class="btn btn-primary" href="{% url 'catalog:ajouter' %}">Ajouter un ouvrage</a></header>
+<form class="toolbar" method="get"><input type="search" name="q" value="{{ q }}" placeholder="Titre, auteur ou ISBN"><button class="btn btn-secondary">Rechercher</button></form>
+<section class="book-grid">{% for livre in page_obj %}<article class="book-card">{% if livre.couverture %}<img src="{{ livre.couverture.url }}" alt="Couverture de {{ livre.titre }}">{% else %}<div class="book-placeholder">{{ livre.titre|first }}</div>{% endif %}<div><span class="pill {% if livre.statut == 'AVAILABLE' %}pill-success{% elif livre.statut == 'RESERVED' %}pill-warning{% else %}pill-danger{% endif %}">{{ livre.get_statut_display }}</span><h2>{{ livre.titre }}</h2><p>{% for auteur in livre.auteurs.all %}{{ auteur }}{% if not forloop.last %}, {% endif %}{% endfor %}</p><small>{{ livre.categorie }} · {{ livre.stock_disponible }}/{{ livre.stock_total }} disponible(s)</small><a class="btn btn-secondary btn-block" href="{% url 'catalog:detail' livre.pk %}">Voir le détail</a></div></article>{% empty %}<div class="empty-state">Aucun ouvrage ne correspond à votre recherche.</div>{% endfor %}</section>
+{% endif %}
+{% endblock %}

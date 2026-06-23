@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+{% block title %}Appliquer une pénalité — Smart Library{% endblock %}
+{% block content %}
+<header class="page-head penalty-simple-head">
+  <div>
+    <h1>Appliquer une pénalité</h1>
+    <p>Enregistrez une sanction pour le client concerné.</p>
+  </div>
+</header>
+
+<section class="panel form-panel penalty-simple-card">
+  <form method="post" class="penalty-simple-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-alert">{{ form.non_field_errors }}</div>{% endif %}
+
+    <div class="penalty-field-row">
+      <div class="field">
+        <label for="{{ form.client.id_for_label }}">{{ form.client.label }}</label>
+        {{ form.client }}
+        {% for error in form.client.errors %}<small class="error">{{ error }}</small>{% endfor %}
+        {% if form.client.help_text %}<small class="field-help">{{ form.client.help_text }}</small>{% endif %}
+      </div>
+      <div class="field">
+        <label for="{{ form.emprunt.id_for_label }}">{{ form.emprunt.label }}</label>
+        {{ form.emprunt }}
+        {% for error in form.emprunt.errors %}<small class="error">{{ error }}</small>{% endfor %}
+        {% if form.emprunt.help_text %}<small class="field-help">{{ form.emprunt.help_text }}</small>{% endif %}
+      </div>
+    </div>
+
+    <div class="penalty-field-row">
+      <div class="field">
+        <label for="{{ form.type.id_for_label }}">{{ form.type.label }}</label>
+        {{ form.type }}
+        {% for error in form.type.errors %}<small class="error">{{ error }}</small>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="{{ form.montant.id_for_label }}">{{ form.montant.label }}</label>
+        {{ form.montant }}
+        {% for error in form.montant.errors %}<small class="error">{{ error }}</small>{% endfor %}
+      </div>
+    </div>
+
+    <div class="field penalty-motif-field">
+      <label for="{{ form.motif.id_for_label }}">{{ form.motif.label }}</label>
+      {{ form.motif }}
+      {% for error in form.motif.errors %}<small class="error">{{ error }}</small>{% endfor %}
+      {% if form.motif.help_text %}<small class="field-help">{{ form.motif.help_text }}</small>{% endif %}
+    </div>
+
+    <div class="penalty-simple-actions">
+      <a class="btn btn-secondary" href="{% url 'penalties:liste' %}">Annuler</a>
+      <button class="btn btn-primary" type="submit">Appliquer la pénalité</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

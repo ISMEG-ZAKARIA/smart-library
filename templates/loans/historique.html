@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% block title %}Historique des emprunts{% endblock %}
+{% block client_topbar_icon %}history_edu{% endblock %}
+{% block client_topbar_title %}Historique des emprunts{% endblock %}
+{% block content %}
+<header class="client-page-head"><h1>Historique des emprunts</h1><p>Consultez vos emprunts passés et actuels.</p></header>
+<section class="client-kpi-grid four">
+  <article><span>Total emprunts</span><strong>{{ total_emprunts }}</strong></article>
+  <article><span>Livres retournés</span><strong>{{ emprunts_retournes }}</strong></article>
+  <article><span>Emprunts actifs</span><strong class="gold">{{ emprunts_actifs }}</strong></article>
+  <article><span>Retards</span><strong class="danger-text">{{ emprunts_retard }}</strong></article>
+</section>
+<section class="client-loan-list">
+  {% for item in emprunts %}
+  <article class="client-loan-card client-surface">
+    <div class="client-loan-book">{% if item.livre.couverture %}<img src="{{ item.livre.couverture.url }}" alt="Couverture de {{ item.livre.titre }}">{% else %}<span class="client-mini-cover">{{ item.livre.titre|first }}</span>{% endif %}<div><h2>{{ item.livre.titre }}</h2><p>{% for auteur in item.livre.auteurs.all %}{{ auteur }}{% if not forloop.last %}, {% endif %}{% endfor %}</p></div></div>
+    <dl><div><dt>Emprunté</dt><dd>{{ item.emprunte_le|date:'d/m/Y' }}</dd></div><div><dt>{% if item.retourne_le %}Retourné{% else %}Retour prévu{% endif %}</dt><dd>{{ item.retourne_le|default:item.retour_prevu_le|date:'d/m/Y' }}</dd></div></dl>
+    <span class="client-loan-state {% if item.statut == 'ACTIVE' and item.jours_retard %}danger{% elif item.statut == 'ACTIVE' %}warning{% endif %}">{% if item.statut == 'ACTIVE' and item.jours_retard %}En retard{% else %}{{ item.get_statut_display }}{% endif %}</span>
+  </article>
+  {% empty %}<div class="client-empty client-surface">Aucun emprunt enregistré.</div>{% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Mon profil{% endblock %}
+{% block client_topbar_icon %}person{% endblock %}
+{% block client_topbar_title %}Mon profil{% endblock %}
+{% block content %}
+<header class="client-page-head">
+  <h1>Mon profil</h1>
+  <p>Consultez les informations de votre compte et votre activité récente.</p>
+</header>
+
+<section class="client-profile-hero client-surface">
+  <img src="{% static 'images/profile.png' %}" alt="Photo de profil de {{ request.user }}">
+  <div>
+    <h2>{{ request.user.get_full_name|default:request.user.username }}</h2>
+    <span class="client-status {% if request.user.est_bloque %}danger{% endif %}">{% if request.user.est_bloque %}Bloqué{% else %}Actif{% endif %}</span>
+  </div>
+  <a class="client-outline-button" href="{% url 'accounts:client_parametres' %}"><span class="material-symbols-outlined">edit</span>Modifier</a>
+</section>
+
+<section class="client-info-grid">
+  <article class="client-info-card"><span>CIN</span><strong>{{ request.user.cin }}</strong></article>
+  <article class="client-info-card"><span>Email</span><strong>{{ request.user.email }}</strong></article>
+  <article class="client-info-card"><span>Téléphone</span><strong>{{ request.user.telephone|default:'Non renseigné' }}</strong></article>
+  <article class="client-info-card"><span>Date d'inscription</span><strong>{{ request.user.date_joined|date:'d/m/Y' }}</strong></article>
+  <article class="client-info-card"><span>Statut</span><strong>{% if request.user.est_bloque %}Bloqué{% else %}Actif{% endif %}</strong></article>
+  <article class="client-info-card"><span>Niveau d'alerte</span><strong>{{ request.user.niveau_alerte }} / 3</strong></article>
+</section>
+
+<h2 class="client-section-title">Résumé de l'activité</h2>
+<section class="client-summary-grid">
+  <article><strong>{{ reservations_total }}</strong><span>Réservations</span></article>
+  <article><strong>{{ emprunts_total }}</strong><span>Emprunts</span></article>
+  <article><strong>{{ penalites_total }}</strong><span>Pénalités</span></article>
+  <article><strong>{{ commentaires_total }}</strong><span>Commentaires</span></article>
+</section>
+
+<h2 class="client-section-title">Activité récente</h2>
+<section class="client-activity-list client-surface">
+  {% for item in activites_recentes %}
+  <article>
+    <span class="material-symbols-outlined">history</span>
+    <div><strong>{{ item.action|capfirst }}</strong><p>{{ item.description_cible|default:'Action enregistrée dans votre espace.' }}</p></div>
+    <time>{{ item.cree_le|timesince }}</time>
+  </article>
+  {% empty %}<p class="client-empty">Aucune activité récente.</p>{% endfor %}
+</section>
+{% endblock %}

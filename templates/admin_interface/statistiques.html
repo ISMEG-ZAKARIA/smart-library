@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %} {% block title %}Statistiques{% endblock %} {%
+block content %}
+<header class="page-head">
+  <div>
+    <h1>Aperçu Analytique</h1>
+    <p>Données et tendances de la bibliothèque.</p>
+  </div>
+</header>
+<section class="kpi-grid four">
+  <article class="kpi">
+    <span>Livres endommagés</span><strong>{{ livres_endommages }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Pénalités appliquées</span><strong>{{ penalites_appliquees }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Taux de réussite (réservations)</span
+    ><strong>{{ taux_reussite }}%</strong>
+  </article>
+  <article class="kpi dark">
+    <span>Emprunts actifs</span><strong>{{ emprunts_actifs }}</strong>
+  </article>
+</section>
+<section class="kpi-grid four">
+  <article class="kpi">
+    <span>Livres disponibles</span
+    ><strong>{{ livres_disponibles }} / {{ total_livres }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Réservations en attente</span
+    ><strong>{{ reservations_en_attente }}</strong>
+  </article>
+  <article class="kpi">
+    <span>Pénalités réglées / ouvertes</span
+    ><strong>{{ penalites_reglees }} / {{ penalites_ouvertes }}</strong>
+  </article>
+  <article class="kpi {% if clients_bloques %}danger{% endif %}">
+    <span>Clients bloqués</span><strong>{{ clients_bloques }}</strong>
+  </article>
+</section>
+<section class="dashboard-grid">
+  <article class="panel chart-panel">
+    <div class="panel-head"><h2>Tendances d'Emprunt (6 derniers mois)</h2></div>
+    <div class="curve-bars" aria-label="Nombre réel d'emprunts sur six mois">
+      {% for point in tendances %}<i
+        style="height:%{{ point.pourcentage }}%"
+        title="{{ point.total }} emprunt(s)"
+      ></i
+      >{% endfor %}
+    </div>
+    <div class="chart-labels">
+      {% for point in tendances %}<span>{{ point.label }}</span>{% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <div class="panel-head"><h2>Statut des Retours</h2></div>
+    <div class="donut" style="--rate:%{{ taux_retours_heure }}%">
+      <strong>{{ taux_retours_heure }}%</strong><span>À l'heure</span>
+    </div>
+    <div class="legend">
+      <span
+        ><i class="dark-dot"></i>Retours à l'heure {{ taux_retours_heure
+        }}%</span
+      ><span
+        ><i class="gold-dot"></i>Retours rendus en retard {{
+        retours_rendus_en_retard }}</span
+      >
+    </div>
+  </article>
+</section>
+<section class="panel">
+  <div class="panel-head"><h2>Valeur des pénalités</h2></div>
+  <p class="metric-line">
+    <strong>{{ montant_penalites }} DH</strong> cumulés sur la période complète.
+  </p>
+</section>
+{% endblock %}
